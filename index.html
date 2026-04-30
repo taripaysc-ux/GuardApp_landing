@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1"
+    />
+    <title>Cuartel Digital - Centro de Operaciones para Seguridad</title>
+    <script>
+      /**
+       * Ultimate fix for "Uncaught TypeError: Cannot set property fetch of #<Window> which has only a getter"
+       * This error occurs in some environments (like AI Studio) when a library or polyfill attempts 
+       * to override window.fetch, which is defined as a non-configurable getter.
+       */
+      (function() {
+        // 1. Global error listener to suppress the specific crash if it still happens
+        window.addEventListener('error', function(event) {
+          if (event.message && (event.message.indexOf('property fetch') > -1) && (event.message.indexOf('only a getter') > -1)) {
+            console.warn('Recovered from fetch override attempt:', event.message);
+            event.preventDefault();
+            event.stopPropagation();
+          }
+        }, true);
+
+        // 2. Early hardening of window.fetch
+        try {
+          var originalFetch = window.fetch;
+          if (originalFetch) {
+            Object.defineProperty(window, 'fetch', {
+              get: function() { return originalFetch; },
+              set: function(v) { 
+                console.warn('A library attempted to override window.fetch. The override was blocked to prevent a crash.');
+              },
+              configurable: true,
+              enumerable: true
+            });
+          }
+        } catch (e) {
+          // If the property is already non-configurable, the error listener above will handle the assignment crash
+          console.log('window.fetch is already non-configurable. Relying on error suppression.');
+        }
+      })();
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  </head>
+
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

@@ -1,0 +1,8 @@
+{
+  "name": "Cuartel General",
+  "description": "Landing page promocional de Cuartel General. Plataforma de seguridad táctica con monitoreo en tiempo real, automatización avanzada e inteligencia artificial.",
+  "requestFramePermissions": [
+    "geolocation"
+  ],
+  "majorCapabilities": []
+}
